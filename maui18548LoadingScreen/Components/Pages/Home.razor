@@ -1,0 +1,40 @@
+﻿@page "/"
+@inject AppReadyService AppReadyService
+
+<h1>Hello, world!</h1>
+
+Welcome to your new app.
+
+@if (!loaded)
+{
+    <div>Loading very slow Blazor... I'd rather not see this...</div>
+}
+else
+{
+    <div>I'm actually loaded, and this is beautiful!</div>
+}
+
+@code
+{
+    bool loaded;
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Pretend the app is doing some very slow 'loading' work here (we fake it using delays)
+        for (int i = 0; i <= 10; i++)
+        {
+            AppReadyService.NotifyAppLoading(i * 10);
+            await Task.Delay(500);
+        }
+
+        // Do one extra fake 'loading' notification to show 100%
+        AppReadyService.NotifyAppLoading(100);
+        await Task.Delay(200);
+
+        // And then tell the rest of the app that we're *really* done
+        AppReadyService.NotifyAppReady();
+
+        loaded = true;
+    }
+
+}
